@@ -1,0 +1,12 @@
+# Node modules
+node_modules/
+
+# Environment variables file
+.env
+
+# API REST test files
+*.rest
+
+
+# IDE specific files
+.vscode/
