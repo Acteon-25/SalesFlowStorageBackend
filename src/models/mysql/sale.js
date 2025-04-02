@@ -8,7 +8,7 @@ const defaultConfig = {
   password: DB_PASSWORD,
   database: DB_NAME,
   waitForConnections: true,
-  connectionLimit: 10,
+  connectionLimit: 5,
   queueLimit: 0, 
   connectTimeout: 60000, 
   keepAliveInitialDelay: 10000,
