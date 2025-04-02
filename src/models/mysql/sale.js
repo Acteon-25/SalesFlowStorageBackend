@@ -6,10 +6,15 @@ const defaultConfig = {
   user: DB_USER,
   port: DB_PORT,
   password: DB_PASSWORD,
-  database: DB_NAME
+  database: DB_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0, 
+  connectTimeout: 60000, 
+  keepAliveInitialDelay: 10000,
 }
 
-const connection = await mysql.createConnection(defaultConfig)
+const connection = await mysql.createPool(defaultConfig)
 
 export class SaleModel {
   static async getAll({ startDateModel, endDateModel }) {
