@@ -77,11 +77,11 @@ export class AuthModel {
         SELECT BIN_TO_UUID(usuario_id) id, username, email, password FROM usuario WHERE email = ?;
       `, [email]);
       if (!userResult[0]) {
-        return { success: false, message: "Error not found", status: 404 };
+        return { success: false, message: "El correo ingresado no está registrado", status: 404 };
       }
       const isMatch = await bcrypt.compare(password, userResult[0].password);
       if (!isMatch) {
-        return { success: false, message: "Incorrect password", status: 401 };
+        return { success: false, message: "La contraseña no es correcta", status: 401 };
       }
       return {
         id: userResult[0].id,

@@ -11,8 +11,16 @@ export class AuthController {
   register = async (req, res) => {
     const result = validateRegister(req.body)
     if (result.error) {
-      const errors = result.error.issues.map(issue => issue.message);
-      return res.status(400).json({ errors })
+      const fieldErrors = {};
+
+      for (const issue of result.error.issues) {
+        const field = issue.path[0];
+        if (!fieldErrors[field]) {
+          fieldErrors[field] = [];
+        }
+        fieldErrors[field].push(issue.message);
+      }
+      return res.status(400).json({ message: fieldErrors })
     }
     const auths = await this.authModel.register({ input: result.data })
     if (auths.success) {
@@ -24,12 +32,14 @@ export class AuthController {
   login = async (req, res) => {
     const result = validateLogin(req.body)
     if (result.error) {
-      const errors = result.error.issues.map(issue => issue.message);
-      return res.status(400).json({ errors })
+      return res.status(400).json({ message: ["Las credenciales no son válidas. Intenta nuevamente."] })
     }
     const auths = await this.authModel.login({ input: result.data })
     if (auths.success === false) {
-      return res.status(auths.status).json({ message: auths.message })
+      if (auths.status === 404 || auths.status === 401) {
+        return res.status(auths.status).json({ message: ["Las credenciales no son válidas. Intenta nuevamente."] })
+      }
+      return res.status(auths.status).json({ message: [auths.message] })
     }
     const token = jwt.sign(
       { id: auths.id, username: auths.username, email: auths.email },
