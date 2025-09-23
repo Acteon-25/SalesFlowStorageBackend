@@ -7,6 +7,7 @@ const defaultConfig = {
   port: POSTGRES_DB_PORT,
   password: POSTGRES_DB_PASSWORD,
   database: POSTGRES_DB_NAME,
+  ssl: { rejectUnauthorized: false },
   max: 5,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 60000,
