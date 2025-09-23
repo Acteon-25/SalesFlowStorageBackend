@@ -1,17 +1,17 @@
 import mysql from "mysql2/promise.js"
-import { DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_USER, SALT_ROUNDS } from "../../config.js"
+import { MYSQL_DB_HOST, MYSQL_DB_NAME, MYSQL_DB_PASSWORD, MYSQL_DB_PORT, MYSQL_DB_USER, SALT_ROUNDS } from '../../config.js';
 import bcrypt from "bcrypt";
 
 const defaultConfig = {
-  host: DB_HOST,
-  user: DB_USER,
-  port: DB_PORT,
-  password: DB_PASSWORD,
-  database: DB_NAME,
+  host: MYSQL_DB_HOST,
+  user: MYSQL_DB_USER,
+  port: MYSQL_DB_PORT,
+  password: MYSQL_DB_PASSWORD,
+  database: MYSQL_DB_NAME,
   waitForConnections: true,
   connectionLimit: 5,
-  queueLimit: 0, 
-  connectTimeout: 60000, 
+  queueLimit: 0,
+  connectTimeout: 60000,
   keepAliveInitialDelay: 10000,
 }
 
