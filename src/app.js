@@ -17,8 +17,13 @@ export const createApp = ({ authModel, itemModel, saleModel }) => {
   app.use("/item", createItemRouter({ itemModel }))
   app.use("/sale", createSaleRouter({ saleModel }))
 
+  app.get("/ping", (req, res) => {
+    res.json({ message: "pong" })
+  })
+  
+
   const PORT = process.env.PORT || 3000
   app.listen(PORT, () => {
-    console.log(`server listening on port http://localhost:${PORT}`)
+    console.log(`server listening on port ${PORT}`)
   })
 }
