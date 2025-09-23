@@ -1,4 +1,4 @@
-import mysql from "mysql2/promise.js"
+/*import mysql from "mysql2/promise.js"
 import { MYSQL_DB_HOST, MYSQL_DB_NAME, MYSQL_DB_PASSWORD, MYSQL_DB_PORT, MYSQL_DB_USER } from '../../config.js';
 
 const defaultConfig = {
@@ -208,4 +208,4 @@ export class ItemModel {
       throw new Error("Error updating item");
     }
   }
-}
+}*/

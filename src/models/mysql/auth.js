@@ -1,4 +1,4 @@
-import mysql from "mysql2/promise.js"
+/*import mysql from "mysql2/promise.js"
 import { MYSQL_DB_HOST, MYSQL_DB_NAME, MYSQL_DB_PASSWORD, MYSQL_DB_PORT, MYSQL_DB_USER, SALT_ROUNDS } from '../../config.js';
 import bcrypt from "bcrypt";
 
@@ -106,4 +106,4 @@ export class AuthModel {
       return res.status(500).json({ message: "Error logging out" })
     }
   }
-}
+}*/
