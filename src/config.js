@@ -9,7 +9,8 @@ export const {
   POSTGRES_DB_USER,
   POSTGRES_DB_PASSWORD,
   POSTGRES_DB_NAME,
-  POSTGRES_DB_PORT
+  POSTGRES_DB_PORT,
+  POSTGRES_DB_URL
 } = process.env;
 
 export const SALT_ROUNDS = parseInt(process.env.SALT_ROUNDS, 10);

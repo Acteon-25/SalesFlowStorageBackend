@@ -6,21 +6,16 @@ import { createSaleRouter } from "./routes/sale.js"
 
 import { corsMiddleware } from "./middlewares/cors.js"
 
-import { POSTGRES_DB_HOST, POSTGRES_DB_NAME, POSTGRES_DB_PASSWORD, POSTGRES_DB_PORT, POSTGRES_DB_USER } from './config.js';
+import { POSTGRES_DB_URL } from './config.js';
 
 import pkg from "pg";
 const { Pool } = pkg;
 
 const pool = new Pool({
-  host: POSTGRES_DB_HOST,
-  user: POSTGRES_DB_USER,
-  port: POSTGRES_DB_PORT,
-  password: POSTGRES_DB_PASSWORD,
-  database: POSTGRES_DB_NAME,
-  max: 5, // connectionLimit equivalent
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 60000,
+  connectionString: POSTGRES_DB_URL,
+  ssl: { rejectUnauthorized: false }
 });
+
 
 export const createApp = ({ authModel, itemModel, saleModel }) => {
   const app = express()
