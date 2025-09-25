@@ -11,6 +11,8 @@ export const createAuthRouter = ({ authModel }) => {
 
   authsRouter.post("/login", authController.login)
 
+  authsRouter.post("/login-mobile", authController.loginMobile)
+
   authsRouter.post("/logout", authController.logout)
   
   authsRouter.get("/profile", authRequired, authController.profile)

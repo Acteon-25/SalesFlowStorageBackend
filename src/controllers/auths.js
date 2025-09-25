@@ -56,6 +56,27 @@ export class AuthController {
     return res.status(200).end();
   }
 
+  loginMobile = async (req, res) => {
+    const result = validateLogin(req.body)
+    if (result.error) {
+      return res.status(400).json({ message: ["Las credenciales no son válidas. Intenta nuevamente."] })
+    }
+    const auths = await this.authModel.login({ input: result.data })
+    if (auths.success === false) {
+      if (auths.status === 404 || auths.status === 401) {
+        return res.status(auths.status).json({ message: ["Las credenciales no son válidas. Intenta nuevamente."] })
+      }
+      return res.status(auths.status).json({ message: [auths.message] })
+    }
+    const token = jwt.sign(
+      { id: auths.id, username: auths.username, email: auths.email },
+      SECRET_KEY,
+      {
+        expiresIn: "2h"
+      });
+    return res.status(200).json({ token });
+  }
+
   logout = async (req, res) => {
     try {
       const auths = await this.authModel.logout(res)

@@ -3,8 +3,14 @@ import jwt from 'jsonwebtoken';
 import { SECRET_KEY } from '../config.js';
 
 export const authRequired = (req, res, next) => {
-  const token = req.cookies.access_token;
+  let token;
 
+  if (req.headers['authorization']) {
+    token = req.headers['authorization'].split(' ')[1];
+  } else if (req.cookies?.access_token) {
+    token = req.cookies.access_token;
+  }
+  
   if (!token) {
     return res.status(401).json({ message: 'No token provided' });
   }
