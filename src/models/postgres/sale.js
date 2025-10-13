@@ -38,7 +38,8 @@ export class SaleModel {
     if (sales.length === 0) {
       return null;
     }
-    return sales[0]; // Devolvemos solo el primer elemento
+    console.log("Model get by ID: ",sales)
+    return sales[0];
   }
 
   static async create({ input, id }) {
@@ -71,27 +72,20 @@ export class SaleModel {
   }
   
   static async delete({ id }) {
-    const client = await pool.connect();
-    try {
-      const { rows: sales } = await client.query(
-        'SELECT venta_id FROM venta WHERE venta_id = $1;',
-        [id]
-      );
+    const { rows: sales } = await pool.query(
+      'SELECT venta_id FROM venta WHERE venta_id = $1;',
+      [id]
+    );
 
-      if (sales.length === 0) {
-        return null;
-      }
-
-      await client.query(
-        'DELETE FROM venta WHERE venta_id = $1;',
-        [id]
-      );
-
-      return { message: "Venta eliminada correctamente" };
-    } catch (error) {
-      throw new Error('Error al eliminar la venta: ' + error.message);
-    } finally {
-      client.release();
+    if (sales.length === 0) {
+      return null;
     }
+
+    await pool.query(
+      'DELETE FROM venta WHERE venta_id = $1;',
+      [id]
+    );
+
+    return { message: "Venta eliminada correctamente" };
   }
 }
