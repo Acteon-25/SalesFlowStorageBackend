@@ -64,27 +64,34 @@ export class SaleModel {
         'INSERT INTO venta (venta_id, usuario_id, producto_id, cantidad, total) VALUES ($1, $2, $3, $4, $5);',
         [uuid, id, producto_id, cantidad, total]
       );
-      return { insertId: uuid }; // Simulate insert result
+      return { insertId: uuid };
     } catch (e) {
       throw new Error("Error creating sale");
     }
   }
-
+  
   static async delete({ id }) {
-    const { rows: sales } = await pool.query(
-      'SELECT venta_id FROM venta WHERE venta_id = $1;',
-      [id]
-    );
+    const client = await pool.connect();
+    try {
+      const { rows: sales } = await client.query(
+        'SELECT venta_id FROM venta WHERE venta_id = $1;',
+        [id]
+      );
 
-    if (sales.length === 0) {
-      return null;
+      if (sales.length === 0) {
+        return null;
+      }
+
+      await client.query(
+        'DELETE FROM venta WHERE venta_id = $1;',
+        [id]
+      );
+
+      return { message: "Venta eliminada correctamente" };
+    } catch (error) {
+      throw new Error('Error al eliminar la venta: ' + error.message);
+    } finally {
+      client.release();
     }
-
-    await pool.query(
-      'DELETE FROM venta WHERE venta_id = $1;',
-      [id]
-    );
-
-    return { message: "Venta eliminada correctamente" };
   }
 }
