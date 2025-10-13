@@ -71,9 +71,6 @@ export class SaleController {
       if (!sale || sale.length === 0) {
         return res.status(404).json({ message: "Venta no encontrada" });
       }
-      console.log(sale)
-      console.log(sale[0].userId);
-      console.log(userId);
       if (sale[0].userId !== userId) {
         return res.status(403).json({ message: "No tienes permisos para eliminar esta venta" });
       }
@@ -84,5 +81,4 @@ export class SaleController {
       return res.status(500).json({ message: "Error interno del servidor" });
     }
   };
-
 }
