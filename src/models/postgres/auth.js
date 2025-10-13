@@ -84,10 +84,15 @@ export class AuthModel {
 
   static async logout(res) {
     try {
-      res.clearCookie("access_token");
-      res.status(200).json({ message: "Logout successful" });
+      res.clearCookie("access_token", {
+        httpOnly: true,
+        secure: true,
+        sameSite: "None",
+        path: "/",
+      });
+      res.status(200).json({ message: "Logout successful" })
     } catch (e) {
-      return res.status(500).json({ message: "Error logging out" });
+      return res.status(500).json({ message: "Error logging out" })
     }
   }
 }
