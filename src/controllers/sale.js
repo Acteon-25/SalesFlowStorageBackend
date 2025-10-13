@@ -64,21 +64,37 @@ export class SaleController {
     try {
       const { id } = req.params;
       const { id: userId } = req.user;
+      
       if (!id) {
         return res.status(400).json({ message: "ID de venta es requerido" });
       }
+      
+      // Verificar si la venta existe y obtener el ID del usuario
       const sale = await this.saleModel.getById({ id });
-      if (!sale || sale.length === 0) {
+      if (!sale) {
         return res.status(404).json({ message: "Venta no encontrada" });
       }
-      if (sale[0].userId !== userId) {
+      
+      // Verificar permisos
+      if (sale.userId !== userId) {
         return res.status(403).json({ message: "No tienes permisos para eliminar esta venta" });
       }
-      await this.saleModel.delete({ id });
+      
+      // Eliminar la venta
+      const result = await this.saleModel.delete({ id });
+      
+      if (result && result.message) {
+        return res.status(200).json({ message: result.message });
+      }
+      
       return res.status(200).json({ message: "Venta eliminada correctamente" });
+      
     } catch (error) {
       console.error("Error eliminando la venta:", error);
-      return res.status(500).json({ message: "Error interno del servidor" });
+      return res.status(500).json({ 
+        message: "Error interno del servidor",
+        error: error.message 
+      });
     }
   };
 }

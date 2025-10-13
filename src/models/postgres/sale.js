@@ -32,13 +32,13 @@ export class SaleModel {
 
   static async getById({ id }) {
     const { rows: sales } = await pool.query(
-      'SELECT u.usuario_id as userId, u.username, p.nombre_producto, v.cantidad, v.total, v.fecha_venta FROM venta v JOIN usuario u ON v.usuario_id = u.usuario_id JOIN producto p ON v.producto_id = p.producto_id WHERE v.venta_id = $1;',
+      'SELECT u.usuario_id as userId, u.username, p.nombre_producto, v.cantidad, v.total, v.fecha_venta, v.venta_id as id FROM venta v JOIN usuario u ON v.usuario_id = u.usuario_id JOIN producto p ON v.producto_id = p.producto_id WHERE v.venta_id = $1;',
       [id]
     );
     if (sales.length === 0) {
       return null;
     }
-    return sales;
+    return sales[0]; // Devolvemos solo el primer elemento
   }
 
   static async create({ input, id }) {
