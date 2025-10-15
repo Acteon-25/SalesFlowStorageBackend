@@ -1,5 +1,5 @@
 import { validateSale } from "../schemas/sales.js"
-import { convertirFecha } from "../services/dateService.js"
+import { obtenerInicioDia, obtenerFinDia } from "../services/dateService.js"
 
 export class SaleController {
   constructor({ saleModel }) {
@@ -7,32 +7,34 @@ export class SaleController {
   }
 
   getAll = async (req, res) => {
-    try {
-      const zonaHoraria = req.headers["timezone"] || "America/Lima";
-      const { startDate, endDate } = req.query;
+  try {
+    const zonaHoraria = req.headers["timezone"] || "America/Lima";
+    const { startDate, endDate } = req.query;
 
-      if (startDate && endDate) {
-        const formattedStartDate = convertirFecha(startDate + " 00:00:00", zonaHoraria)
-        const formattedEndDate = endDate
-        const sales = await this.saleModel.getAll({ startDateModel: formattedStartDate, endDateModel: formattedEndDate });
+    if (startDate && endDate) {
+      const formattedStartDate = obtenerInicioDia(startDate, zonaHoraria);
+      const formattedEndDate = obtenerFinDia(endDate, zonaHoraria);
+      
+      console.log('Buscando ventas:', { formattedStartDate, formattedEndDate, zonaHoraria });
+      
+      const sales = await this.saleModel.getAll({ 
+        startDateModel: formattedStartDate, 
+        endDateModel: formattedEndDate 
+      });
 
-        const salesConvertidas = sales.map(sale => ({
-          ...sale,
-          fecha_venta: convertirFecha(sale.fecha_venta, zonaHoraria),
-        }));
-        return res.json(salesConvertidas);
-      }
-      const sales = await this.saleModel.getAll({ startDateModel: startDate, endDateModel: endDate });
-      const salesConvertidas = sales.map(sale => ({
-        ...sale,
-        fecha_venta: convertirFecha(sale.fecha_venta, zonaHoraria),
-      }));
-
-      return res.json(salesConvertidas);
-    } catch (error) {
-      return res.status(500).json({ error: "Error al obtener las ventas" });
+      // NO convertir aquí, enviar la fecha raw de la BD
+      // El frontend se encargará de formatearla según su zona horaria
+      return res.json(sales);
     }
-  };
+    
+    const sales = await this.saleModel.getAll({});
+    return res.json(sales);
+    
+  } catch (error) {
+    console.error("Error en getAll:", error);
+    return res.status(500).json({ error: "Error al obtener las ventas", details: error.message });
+  }
+};
 
   getById = async (req, res) => {
     const { id } = req.params
