@@ -3,6 +3,8 @@ import { pool } from './db.js';
 export class SaleModel {
   static async getAll({ startDateModel, endDateModel }) {
     if (startDateModel && endDateModel) {
+      console.log('Ejecutando query con:', { startDateModel, endDateModel });
+
       const { rows: sales } = await pool.query(
         `SELECT 
           u.username, 
@@ -14,12 +16,13 @@ export class SaleModel {
        FROM venta v
        JOIN usuario u ON v.usuario_id = u.usuario_id
        JOIN producto p ON v.producto_id = p.producto_id
-       WHERE v.fecha_venta >= $1 
-         AND v.fecha_venta < $2::timestamp + INTERVAL '1 second'
+       WHERE v.fecha_venta >= $1::timestamp 
+         AND v.fecha_venta <= $2::timestamp
        ORDER BY v.fecha_venta DESC;`,
         [startDateModel, endDateModel]
       );
 
+      console.log(`Encontradas ${sales.length} ventas`);
       return sales;
     }
 
