@@ -1,12 +1,12 @@
 import { validateSale } from "../schemas/sales.js"
-import { convertirFechaAZonaHoraria, obtenerInicioDia, obtenerFinDia } from "../services/dateService.js"
+import { convertirFecha } from "../services/dateService.js"
 
 export class SaleController {
   constructor({ saleModel }) {
     this.saleModel = saleModel
   }
 
-  /*getAll = async (req, res) => {
+  getAll = async (req, res) => {
     try {
       const zonaHoraria = req.headers["timezone"] || "America/Lima";
       const { startDate, endDate } = req.query;
@@ -30,68 +30,6 @@ export class SaleController {
 
       return res.json(salesConvertidas);
     } catch (error) {
-      return res.status(500).json({ error: "Error al obtener las ventas" });
-    }
-  };*/
-
-  getAll = async (req, res) => {
-    try {
-      // Obtener la zona horaria del header (enviada desde el frontend)
-      const zonaHoraria = req.headers["timezone"] || "America/Lima";
-      const { startDate, endDate } = req.query;
-
-      if (startDate && endDate) {
-        // Convertir las fechas locales del usuario a UTC para la consulta
-        const formattedStartDate = obtenerInicioDia(startDate, zonaHoraria);
-        const formattedEndDate = obtenerFinDia(endDate, zonaHoraria);
-
-        console.log(`Buscando ventas entre ${formattedStartDate} y ${formattedEndDate} para zona ${zonaHoraria}`);
-
-        const sales = await this.saleModel.getAll({
-          startDateModel: formattedStartDate,
-          endDateModel: formattedEndDate
-        });
-
-        // Convertir las fechas UTC de la BD a la zona horaria del usuario
-        const salesConvertidas = sales.map(sale => ({
-          ...sale,
-          fecha_venta: convertirFechaAZonaHoraria(sale.fecha_venta, zonaHoraria),
-          // Opcional: agregar fecha formateada legible
-          fecha_venta_legible: new Date(sale.fecha_venta).toLocaleString('es-ES', {
-            timeZone: zonaHoraria,
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-            hour12: false
-          })
-        }));
-
-        return res.json(salesConvertidas);
-      }
-
-      // Sin filtro de fechas
-      const sales = await this.saleModel.getAll({});
-      const salesConvertidas = sales.map(sale => ({
-        ...sale,
-        fecha_venta: convertirFechaAZonaHoraria(sale.fecha_venta, zonaHoraria),
-        fecha_venta_legible: new Date(sale.fecha_venta).toLocaleString('es-ES', {
-          timeZone: zonaHoraria,
-          year: 'numeric',
-          month: '2-digit',
-          day: '2-digit',
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit',
-          hour12: false
-        })
-      }));
-
-      return res.json(salesConvertidas);
-    } catch (error) {
-      console.error("Error en getAll:", error);
       return res.status(500).json({ error: "Error al obtener las ventas" });
     }
   };
