@@ -3,43 +3,15 @@ import { pool } from './db.js';
 export class SaleModel {
   static async getAll({ startDateModel, endDateModel }) {
     if (startDateModel && endDateModel) {
-      console.log('Ejecutando query con:', { startDateModel, endDateModel });
-
       const { rows: sales } = await pool.query(
-        `SELECT 
-          u.username, 
-          p.nombre_producto, 
-          v.cantidad, 
-          v.total, 
-          v.fecha_venta, 
-          v.venta_id
-       FROM venta v
-       JOIN usuario u ON v.usuario_id = u.usuario_id
-       JOIN producto p ON v.producto_id = p.producto_id
-       WHERE v.fecha_venta >= $1::timestamp 
-         AND v.fecha_venta <= $2::timestamp
-       ORDER BY v.fecha_venta DESC;`,
+        'SELECT u.username, p.nombre_producto, v.cantidad, v.total, v.fecha_venta, v.venta_id FROM venta v JOIN usuario u ON v.usuario_id = u.usuario_id JOIN producto p ON v.producto_id = p.producto_id WHERE v.fecha_venta >= $1 AND v.fecha_venta < $2;',
         [startDateModel, endDateModel]
       );
-
-      console.log(`Encontradas ${sales.length} ventas`);
       return sales;
     }
-
     const { rows: sales } = await pool.query(
-      `SELECT 
-        u.username, 
-        p.nombre_producto, 
-        v.cantidad, 
-        v.total, 
-        v.fecha_venta,
-        v.venta_id
-     FROM venta v
-     JOIN usuario u ON v.usuario_id = u.usuario_id
-     JOIN producto p ON v.producto_id = p.producto_id
-     ORDER BY v.fecha_venta DESC;`
+      'SELECT u.username, p.nombre_producto, v.cantidad, v.total, v.fecha_venta, v.venta_id FROM venta v JOIN usuario u ON v.usuario_id = u.usuario_id JOIN producto p ON v.producto_id = p.producto_id;'
     );
-
     return sales;
   }
 
@@ -82,7 +54,7 @@ export class SaleModel {
       throw new Error("Error creating sale");
     }
   }
-
+  
   static async delete({ id }) {
     const { rows: sales } = await pool.query(
       'SELECT venta_id FROM venta WHERE venta_id = $1;',
